@@ -1,0 +1,87 @@
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "TESThub beta",
+    LoadingTitle = "Loading",
+    LoadingSubtitle = "by Sirius",
+    Theme = "Default",
+    ToggleUIKeybind = "K"
+})
+
+local Tab = Window:CreateTab("メイン", 4483362458)
+
+-- すり抜け (Noclip)
+local noclipEnabled = false
+local RunService = game:GetService("RunService")
+local noclipConn
+
+Tab:CreateToggle({
+    Name = "すり抜け",
+    CurrentValue = false,
+    Callback = function(Value)
+        noclipEnabled = Value
+        if Value then
+            noclipConn = RunService.Stepped:Connect(function()
+                local char = game.Players.LocalPlayer.Character
+                if char then
+                    for _, part in pairs(char:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
+                    end
+                end
+            end)
+        else
+            if noclipConn then noclipConn:Disconnect() end
+            local char = game.Players.LocalPlayer.Character
+            if char then
+                for _, part in pairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
+        end
+    end
+})
+
+-- Vfly
+
+Tab:CreateButton({
+    Name = "くろすけ作vfly",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/makkurokurosukescript/VFly-gui/refs/heads/main/VFly%20gui"))()
+    end
+})
+
+-- スピード (WalkSpeed)
+local speedEnabled = false
+local currentSpeed = 50
+
+Tab:CreateToggle({
+    Name = "スピードハック",
+    CurrentValue = false,
+    Callback = function(Value)
+        speedEnabled = Value
+        local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = Value and currentSpeed or 16
+        end
+    end
+})
+
+Tab:CreateSlider({
+    Name = "スピード値",
+    Range = {16, 500},
+    Increment = 1,
+    CurrentValue = 50,
+    Callback = function(Value)
+        currentSpeed = Value
+        if speedEnabled then
+            local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = Value
+            end
+        end
+    end
+})
